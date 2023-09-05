@@ -21,9 +21,10 @@ android {
 def dexVariants = ['Debug', 'Release']
 dexVariants.each { variant -> 
     task "generateDex${variant}"(dependsOn: "assemble${variant}") {
+        def varian = variant.toLowerCase()
         def androidSdkRoot = System.getenv("ANDROID_SDK_ROOT")
         def d8Path = "${androidSdkRoot}/build-tools/${android.buildToolsVersion}/d8"
-        def outputPath = "build/outputs/dex/${variant.toLowerCase()}"
+        def outputPath = "build/outputs/dex/${varian}"
         
         doFirst {
             def folder = file(outputPath)
@@ -36,11 +37,11 @@ dexVariants.each { variant ->
                 // Help me fix it then.
                 commandLine "bash",
                 d8Path,
-                "--${variant.toLowerCase()}",
+                "--${varian}",
                 '--output', outputPath,
                 '--min-api', android.defaultConfig.minSdk,
                 '--lib', "${androidSdkRoot}/platforms/android-${android.compileSdk}/android.jar",
-                "build/intermediates/aar_main_jar/${variant}/classes.jar"
+                "build/intermediates/aar_main_jar/${varian}/classes.jar"
             }
         }
     }
