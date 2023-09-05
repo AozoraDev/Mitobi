@@ -1,0 +1,47 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace 'com.harubyte.mitobi'
+    compileSdk 34
+    buildToolsVersion "34.0.4"
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 34
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+def dexVariants = ['Debug', 'Release']
+dexVariants.each { variant -> 
+    task "generateDex${variant}"(dependsOn: "assemble${variant}") {
+        def androidSdkRoot = System.getenv("ANDROID_SDK_ROOT")
+        def d8Path = "${androidSdkRoot}/build-tools/${android.buildToolsVersion}/d8"
+        def outputPath = "build/outputs/dex/${variant.toLowerCase()}"
+        
+        doFirst {
+            def folder = file(outputPath)
+            if (!folder.exists()) folder.mkdirs()
+        }
+        
+        doLast {
+            exec {
+                // I dont give a f*ck about build on Windows support.
+                // Help me fix it then.
+                commandLine "bash",
+                d8Path,
+                "--${variant.toLowerCase()}",
+                '--output', outputPath,
+                '--min-api', android.defaultConfig.minSdk,
+                '--lib', "${androidSdkRoot}/platforms/android-${android.compileSdk}/android.jar",
+                "build/intermediates/aar_main_jar/${variant}/classes.jar"
+            }
+        }
+    }
+}
