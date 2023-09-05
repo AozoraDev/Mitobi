@@ -1,0 +1,40 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: set up JDK 17
+      uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Build APK
+      run: ./gradlew assembleDebug
+    - name: Build DEX
+      run: ./gradlew generateDexDebug
+    - name: Store generated APK file
+      uses: actions/upload-artifact@v2
+      with:
+        name: Mitobi (APK)
+        path: |
+          ./app/build/outputs/apk/debug/app-debug.apk
+    - name: Store generated DEX file
+      uses: actions/upload-artifact@v2
+      with:
+        name: Mitobi (DEX)
+        path: |
+          ./lib/build/outputs/dex/debug/classes.dex
