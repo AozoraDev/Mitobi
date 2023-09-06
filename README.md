@@ -4,9 +4,9 @@ Mitobi is a tool for backing up internal Android app data without the need for r
 ## Features
 - [x] Backup
 - [x] Restore
-- [] File Chooser
-- [] Backup to external storage (if the app has storage permission)
-- [] Works without modifying the APK (root probably required)
+- [ ] File Chooser
+- [ ] Backup to external storage (if the app has storage permission)
+- [ ] Works without modifying the APK (root probably required)
 ## Installing
 > We are currently working on our injector called [Pita](https://github.com/HaruByte/Pita). \
 > Mitobi is just a preview of [Pita](https://github.com/HaruByte/Pita).
