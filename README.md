@@ -10,9 +10,9 @@ By modifying the APK, Mitobi works by copying the internal data to the external 
 - [ ] Backup to internal storage (if the app has storage permission)
 - [ ] Works without modifying the APK (root probably required)
 ## Installing
-See [Wiki:Installing](/wiki/Installing)
+See [Wiki:Installing](https://github.com/HaruByte/Mitobi/wiki/Installing)
 ## Building
-See [Wiki:Building](/wiki/Building)
+See [Wiki:Building](https://github.com/HaruByte/Mitobi/wiki/Building)
 ## License
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
