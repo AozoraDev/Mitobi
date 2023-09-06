@@ -37,6 +37,8 @@ public class Mitobi {
         .create();
         
         Log.i(NAME, TITLE + " initiated!");
+        
+        start();
     }
     
     /*
