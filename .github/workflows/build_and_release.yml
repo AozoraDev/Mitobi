@@ -28,7 +28,4 @@ jobs:
       with:
         artifacts: "./lib/build/outputs/dex/release/classes.dex"
         name: "Release ${{ github.ref }}"
-        body: |
-        Test
-        
-        Newline test
+        body: "TEST\nAnother test\n\n[Hyperlink Test]()"
