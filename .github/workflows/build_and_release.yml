@@ -28,5 +28,5 @@ jobs:
       uses: ncipollo/release-action@v1
       with:
         artifacts: "./lib/build/outputs/dex/release/classes.dex"
-        name: "Release ${{ github.ref }}"
-        body: "TEST\nAnother test\n\n[Hyperlink Test]()"
+        name: "Release ${{ github.ref_name }}"
+        body: "## Changelogs\nTODO\n\nSee [Wiki:Installing](https://github.com/HaruByte/Mitobi/wiki/Installing) for installation tutorial."
