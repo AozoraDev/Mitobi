@@ -21,10 +21,6 @@ public class Mitobi {
     private File data, externalData;
     private AlertDialog processDialog, mainDialog;
     
-    private final String NAME = "Mitobi";
-    private final String VERSION = "1.0";
-    private final String TITLE = String.format("%s (v%s)", NAME, VERSION);
-    
     public Mitobi(Context context) {
         this.context = context;
         
@@ -36,7 +32,7 @@ public class Mitobi {
         .setCancelable(false)
         .create();
         
-        Log.i(NAME, TITLE + " initiated!");
+        Log.i(Configs.NAME, Configs.TITLE + " initiated!");
         
         start();
     }
@@ -56,18 +52,19 @@ public class Mitobi {
     public void start(Boolean back) {
         // If not back, create new dialog
         if (!back) {
-            Log.i(NAME, "Started!");
+            Log.i(Configs.NAME, "Started!");
             
             StringBuilder sb = new StringBuilder();
             ApplicationInfo ai = context.getApplicationInfo();
+            String appLabel = ai.labelRes == 0 ? ai.nonLocalizedLabel.toString() : context.getString(ai.labelRes);
             
-            sb.append("App Name: " + (ai.labelRes == 0 ? ai.nonLocalizedLabel.toString() : context.getString(ai.labelRes)));
-            sb.append("\n\nPackage Name: " + ai.packageName);
+            sb.append("| " + appLabel + " |\n");
+            sb.append(ai.packageName);
             sb.append("\n\nData 1: " + data.toPath());
             sb.append("\n\nData 2: " + externalData.getParentFile().toPath());
             
             mainDialog = new AlertDialog.Builder(context)
-            .setTitle(TITLE)
+            .setTitle(Configs.TITLE)
             .setMessage(sb.toString())
             .setPositiveButton("Backup", (d, w) -> backupDialog())
             .setNegativeButton("Restore", (d, w) -> restoreDialog())
@@ -75,10 +72,10 @@ public class Mitobi {
                 // Don't shutdown the executor and handler if its a test app
                 if (!ai.packageName.equals("com.harubyte.mitobiapp")) {
                     kill();
-                    Log.i(NAME, "Handler and Executor terminated!");
+                    Log.i(Configs.NAME, "Handler and Executor terminated!");
                 }
                 
-                Log.i(NAME, "Terminated!");
+                Log.i(Configs.NAME, "Terminated!");
             })
             .setCancelable(false)
             .show();
@@ -110,7 +107,7 @@ public class Mitobi {
         sb.append(fileLists);
         
         AlertDialog dialog = new AlertDialog.Builder(context)
-        .setTitle(TITLE)
+        .setTitle(Configs.TITLE)
         .setMessage(sb.toString())
         .setCancelable(false)
         .setPositiveButton("Restore", null)
@@ -147,7 +144,7 @@ public class Mitobi {
         sb.append(fileLists);
         
         AlertDialog dialog = new AlertDialog.Builder(context)
-        .setTitle(TITLE)
+        .setTitle(Configs.TITLE)
         .setMessage(sb.toString())
         .setPositiveButton("Backup", null)
         .setNegativeButton("Backup (with cache)", null)
@@ -204,7 +201,7 @@ public class Mitobi {
             // Need to convert external path to internal path first.
             String path = file.getAbsolutePath().replaceAll(externalData.getAbsolutePath(), data.getAbsolutePath());
             
-            Log.i(NAME, "Restoring " + file.getAbsolutePath() + "...");
+            Log.i(Configs.NAME, "Restoring " + file.getAbsolutePath() + "...");
             
             // If current loop is directory,
             // create the dir and call backup again.
@@ -220,7 +217,7 @@ public class Mitobi {
                 Utils.write(file, path);
             } catch (Exception e) {
                 handler.post(() -> Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
-                Log.e(NAME, e.getMessage());
+                Log.e(Configs.NAME, e.getMessage());
                 break;
             }
         }
@@ -249,7 +246,7 @@ public class Mitobi {
             String path = file.getAbsolutePath().replaceAll(data.getAbsolutePath(), externalData.getAbsolutePath());
             if (!withCache && path.contains("cache")) continue;
             
-            Log.i(NAME, "Backing up " + file.getAbsolutePath() + "...");
+            Log.i(Configs.NAME, "Backing up " + file.getAbsolutePath() + "...");
             
             // If current loop is directory,
             // create the dir and call backup again.
@@ -265,7 +262,7 @@ public class Mitobi {
                 Utils.write(file, path);
             } catch (Exception e) {
                 handler.post(() -> Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show());
-                Log.e(NAME, e.getMessage());
+                Log.e(Configs.NAME, e.getMessage());
                 break;
             }
         }
