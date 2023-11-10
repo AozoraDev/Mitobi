@@ -103,10 +103,11 @@ public class Mitobi {
     */
     private void restoreDialog() {
         StringBuilder sb = new StringBuilder();
+        String fileLists = getFilesList(externalData);
         
         sb.append("WARNING: THE INTERNAL DATA OF THIS APPLICATION WILL BE DELETED\n\n");
         sb.append("The files to be restored: ");
-        sb.append(getFilesList(externalData));
+        sb.append(fileLists);
         
         AlertDialog dialog = new AlertDialog.Builder(context)
         .setTitle(TITLE)
@@ -118,6 +119,8 @@ public class Mitobi {
         
         dialog.setOnShowListener((d) -> {
             Button positiveButton = ((AlertDialog) d).getButton(AlertDialog.BUTTON_POSITIVE);
+            
+            if (fileLists == "Empty") positiveButton.setEnabled(false);
             positiveButton.setOnClickListener(v -> {
                 processDialog.setMessage("Restoring...");
                 processDialog.show();
@@ -137,10 +140,11 @@ public class Mitobi {
     */
     private void backupDialog() {
         StringBuilder sb = new StringBuilder();
+        String fileLists = getFilesList(data);
         
         sb.append("WARNING: PREVIOUSLY BACKED-UP DATA WILL BE DELETED\n\n");
         sb.append("The files to be backed up: ");
-        sb.append(getFilesList(data));
+        sb.append(fileLists);
         
         AlertDialog dialog = new AlertDialog.Builder(context)
         .setTitle(TITLE)
@@ -155,6 +159,8 @@ public class Mitobi {
         dialog.setOnShowListener((d) -> {
             // Backup (Without cache)
             Button positiveButton = ((AlertDialog) d).getButton(AlertDialog.BUTTON_POSITIVE);
+            
+            if (fileLists == "Empty") positiveButton.setEnabled(false);
             positiveButton.setOnClickListener(v -> {
                 processDialog.setMessage("Backing up...");
                 processDialog.show();
@@ -167,6 +173,8 @@ public class Mitobi {
             
             // Backup (With cache)
             Button negativeButton = ((AlertDialog) d).getButton(AlertDialog.BUTTON_NEGATIVE);
+            
+            if (fileLists == "Empty") negativeButton.setEnabled(false);
             negativeButton.setOnClickListener(v -> {
                 processDialog.setMessage("Backing up (with cache)...");
                 processDialog.show();
