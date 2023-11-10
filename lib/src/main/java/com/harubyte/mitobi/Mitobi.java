@@ -291,7 +291,8 @@ public class Mitobi {
         StringBuilder sb = new StringBuilder();
         for (File file : files.listFiles()) {
             String path = file.getAbsolutePath().replaceAll(mainPath, "");
-            sb.append("\n- " + path);
+            sb.append("\n- " + path + " ");
+            sb.append(file.isDirectory() ? "(DIR)" : "");
             if (file.isDirectory() && file.list().length > 0) sb.append(getFilesList(file));
         }
         
