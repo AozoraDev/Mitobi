@@ -16,6 +16,7 @@ import java.util.concurrent.Executors;
 public class Mitobi {
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     
+    private Interface.OnDialogClosed callback;
     private Context context;
     private Handler handler;
     private File data, externalData;
@@ -75,6 +76,7 @@ public class Mitobi {
                     Log.i(Configs.NAME, "Handler and Executor terminated!");
                 }
                 
+                if (callback != null) callback.onClose();
                 Log.i(Configs.NAME, "Terminated!");
             })
             .setCancelable(false)
@@ -89,6 +91,16 @@ public class Mitobi {
     public void kill() {
         executor.shutdownNow();
         handler = null;
+    }
+    
+    /*
+    * Set callback for closed dialog
+    *
+    * @param callback    Callback
+    */
+    public Mitobi setOnDialogClosed(Interface.OnDialogClosed callback) {
+        this.callback = callback;
+        return this;
     }
     
       /////////////
