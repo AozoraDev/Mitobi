@@ -222,15 +222,13 @@ public class Mitobi {
             }
         }
         
-        if (isMainProcess) {
-            handler.post(() -> {
-                Toast.makeText(context, "All data restored successfully!\nPlease re-open the app.", Toast.LENGTH_LONG).show();
-                processDialog.dismiss();
-                    
-                kill();
-                ((Activity) context).finishAffinity();
-            });
-        }
+        if (isMainProcess) handler.post(() -> {
+            Toast.makeText(context, "All data restored successfully!\nPlease re-open the app.", Toast.LENGTH_LONG).show();
+            processDialog.dismiss();
+            
+            kill();
+            ((Activity) context).finishAffinity();
+        });
     }
     
     /*
@@ -267,12 +265,10 @@ public class Mitobi {
             }
         }
         
-        if (isMainProcess) {
-            handler.post(() -> {
-                Toast.makeText(context, "All data backed up successfully!", Toast.LENGTH_LONG).show();
-                processDialog.dismiss();
-            });
-        }
+        if (isMainProcess) handler.post(() -> {
+            Toast.makeText(context, "All data backed up successfully!", Toast.LENGTH_LONG).show();
+            processDialog.dismiss();
+        });
     }
     
     /*
