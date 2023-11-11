@@ -29,4 +29,4 @@ jobs:
       with:
         artifacts: "./lib/build/outputs/dex/release/classes.dex"
         name: "Release ${{ github.ref_name }}"
-        body: "## Changelogs\nTODO\n\nSee [Wiki:Installing](https://github.com/HaruByte/Mitobi/wiki/Installing) for installation tutorial."
+        body: "## Changelogs\n$(cat ./changelogs/${{ github.ref_name }}.md)\n\nSee [Wiki:Installing](https://github.com/HaruByte/Mitobi/wiki/Installing) for installation tutorial."
