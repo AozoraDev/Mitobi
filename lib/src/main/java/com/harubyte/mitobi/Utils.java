@@ -32,15 +32,17 @@ public class Utils {
     * @param files    The File of the directory
     * @return         truthy if all files deleted, otherwise falsy
     */
-    public static boolean removeAll (File files) {
+    public static void removeAll (File files) {
         File[] contents = files.listFiles();
-        if (contents != null) {
-            for (File file : contents) {
-                removeAll(file);
-            }
-        }
         
-        return files.delete();
+        for (File file : contents) {
+            if (file.isDirectory()) {
+                removeAll(file);
+                continue;
+            }
+            
+            file.delete();
+        }
     }
     
     /*
