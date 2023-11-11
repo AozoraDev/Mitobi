@@ -24,12 +24,9 @@ jobs:
       run: chmod +x gradlew
     - name: Build DEX
       run: ./gradlew generateDexRelease
-    - name: Get changelogs
-      id: changelogs
-      run: echo "::set-output name=content::$(cat ./changelogs/${{ github.ref_name }}.md | sed ':a;N;$!ba;s/\n/\\n/g')"
     - name: Release
       uses: ncipollo/release-action@v1
       with:
         artifacts: "./lib/build/outputs/dex/release/classes.dex"
         name: "Release ${{ github.ref_name }}"
-        body: "## Changelogs\n${{ steps.changelogs.outputs.content }}\n\nSee [Wiki:Installing](https://github.com/HaruByte/Mitobi/wiki/Installing) for installation tutorial."
+        bodyFile: "./changelogs/${{ github.ref_name }}.md"
