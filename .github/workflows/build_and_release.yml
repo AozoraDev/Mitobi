@@ -26,7 +26,7 @@ jobs:
       run: ./gradlew generateDexRelease
     - name: Get changelogs
       id: changelogs
-      run: echo "::set-output name=content::$(cat ./changelogs/${{ github.ref_name }}.md)"
+      run: echo "::set-output name=content::$(cat ./changelogs/${{ github.ref_name }}.md | sed ':a;N;$!ba;s/\n/\\n/g')"
     - name: Release
       uses: ncipollo/release-action@v1
       with:
