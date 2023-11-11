@@ -1,5 +1,6 @@
 package com.harubyte.mitobi;
 
+import android.R;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,6 +17,7 @@ import java.util.concurrent.Executors;
 public class Mitobi {
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     
+    private int theme;
     private Interface.OnDialogClosed callback;
     private Context context;
     private Handler handler;
@@ -25,11 +27,18 @@ public class Mitobi {
     public Mitobi(Context context) {
         this.context = context;
         
+        // Determine theme
+        if (Utils.isNightMode(context)) {
+            theme = R.style.Theme_Material_Dialog_Alert;
+        } else {
+            theme = R.style.Theme_Material_Light_Dialog_Alert;
+        }
+        
         // Set up some needed stuff
         this.handler = new Handler(context.getMainLooper());
         this.data = context.getDataDir();
         this.externalData = context.getExternalFilesDir("Mitobi");
-        this.processDialog = new AlertDialog.Builder(context)
+        this.processDialog = new AlertDialog.Builder(context, theme)
         .setCancelable(false)
         .create();
         
@@ -64,7 +73,7 @@ public class Mitobi {
             sb.append("\n\nData 1: " + data.toPath());
             sb.append("\n\nData 2: " + externalData.getParentFile().toPath());
             
-            mainDialog = new AlertDialog.Builder(context)
+            mainDialog = new AlertDialog.Builder(context, theme)
             .setTitle(Configs.TITLE)
             .setMessage(sb.toString())
             .setPositiveButton("Backup", (d, w) -> backupDialog())
@@ -118,7 +127,7 @@ public class Mitobi {
         sb.append("The files to be restored: ");
         sb.append(fileLists);
         
-        AlertDialog dialog = new AlertDialog.Builder(context)
+        AlertDialog dialog = new AlertDialog.Builder(context, theme)
         .setTitle(Configs.TITLE)
         .setMessage(sb.toString())
         .setCancelable(false)
@@ -155,7 +164,7 @@ public class Mitobi {
         sb.append("The files to be backed up: ");
         sb.append(fileLists);
         
-        AlertDialog dialog = new AlertDialog.Builder(context)
+        AlertDialog dialog = new AlertDialog.Builder(context, theme)
         .setTitle(Configs.TITLE)
         .setMessage(sb.toString())
         .setPositiveButton("Backup", null)

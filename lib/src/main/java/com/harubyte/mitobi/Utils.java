@@ -1,5 +1,7 @@
 package com.harubyte.mitobi;
 
+import android.content.Context;
+import android.content.res.Configuration;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -39,5 +41,21 @@ public class Utils {
         }
         
         return files.delete();
+    }
+    
+    /*
+    * Check if the device is in dark mode
+    *
+    * @param context    Activity context
+    */
+    public static boolean isNightMode(Context context) {
+        int nightMode = context.getResources().getConfiguration().uiMode
+        & Configuration.UI_MODE_NIGHT_MASK;
+        
+        if (nightMode == Configuration.UI_MODE_NIGHT_YES) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
