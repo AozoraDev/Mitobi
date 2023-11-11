@@ -27,18 +27,15 @@ public class Utils {
     }
     
     /*
-    * Delete a directory and its children
+    * Delete all contents inside the directory
     *
-    * @param files    The File of the directory
-    * @return         truthy if all files deleted, otherwise falsy
+    * @param files    The directory as File
     */
     public static void removeAll (File files) {
         File[] contents = files.listFiles();
-        
-        for (File file : contents) {
+        if (contents != null) for (File file : contents) {
             if (file.isDirectory()) {
                 removeAll(file);
-                continue;
             }
             
             file.delete();
