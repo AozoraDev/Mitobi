@@ -13,6 +13,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.json.JSONObject;
 
 public class Mitobi {
     private ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -23,27 +24,44 @@ public class Mitobi {
     private Handler handler;
     private File data, externalData;
     private AlertDialog processDialog, mainDialog;
+    private JSONObject config;
     
     public Mitobi(Context context) {
-        this.context = context;
-        
-        // Determine theme
-        if (Utils.isNightMode(context)) {
-            theme = R.style.Theme_Material_Dialog_Alert;
-        } else {
-            theme = R.style.Theme_Material_Light_Dialog_Alert;
-        }
-        
         // Set up some needed stuff
+        this.context = context;
         this.handler = new Handler(context.getMainLooper());
         this.data = context.getDataDir();
         this.externalData = context.getExternalFilesDir("Mitobi");
+        
+        try {
+            // Set up config file
+            File configFile = new File(externalData.getParent() + File.separator + "MitobiConfig.json");
+            Configs.setupConfig(configFile);
+            
+            this.config = new JSONObject(Utils.read(configFile));
+        } catch (Exception err) {
+            err.printStackTrace();
+            
+            // If local config error, use default config
+            Toast.makeText(context, "Error: Local config is broken, using default config instead.", Toast.LENGTH_LONG).show();
+            this.config = Configs.defaultConfig();
+        }
+        
+        // Determine theme
+        if (config.optBoolean("useMaterialTheme", true)) {
+            if (Utils.isNightMode(context)) {
+                theme = R.style.Theme_Material_Dialog_Alert;
+            } else {
+                theme = R.style.Theme_Material_Light_Dialog_Alert;
+            }
+        }
+        
+        // AlertDialog for loading
         this.processDialog = new AlertDialog.Builder(context, theme)
         .setCancelable(false)
         .create();
         
         Log.i(Configs.NAME, Configs.TITLE + " initiated!");
-        
         start();
     }
     
@@ -62,6 +80,21 @@ public class Mitobi {
     public void start(Boolean back) {
         // If not back, create new dialog
         if (!back) {
+            // Auto Backup
+            if (config.optBoolean("autoBackup", false)) {
+                executor.execute(() -> {
+                    Utils.removeAll(externalData);
+                    if (config.optBoolean("autoBackup_withCache", false)) {
+                        backup(data, true, true);
+                    } else {
+                        backup(data, false, true);
+                    }
+                    
+                    // Kill the executor if dialog is hidden
+                    if (config.optBoolean("hideDialog", false)) kill();
+                });
+            }
+            
             Log.i(Configs.NAME, "Started!");
             
             StringBuilder sb = new StringBuilder();
@@ -82,14 +115,15 @@ public class Mitobi {
                 // Don't shutdown the executor and handler if its a test app
                 if (!ai.packageName.equals("com.harubyte.mitobiapp")) {
                     kill();
-                    Log.i(Configs.NAME, "Handler and Executor terminated!");
                 }
                 
                 if (callback != null) callback.onClose();
-                Log.i(Configs.NAME, "Terminated!");
+                Log.i(Configs.NAME, "Dialog closed!");
             })
             .setCancelable(false)
-            .show();
+            .create();
+            
+            if (!config.optBoolean("hideDialog", false)) mainDialog.show();
         } else {
             // Otherwise, show the already created mainDialog
             mainDialog.show();
@@ -100,6 +134,8 @@ public class Mitobi {
     public void kill() {
         executor.shutdownNow();
         handler = null;
+        
+        Log.i(Configs.NAME, "Handler and Executor terminated!");
     }
     
     /*
@@ -245,7 +281,7 @@ public class Mitobi {
         
         if (isMainProcess) handler.post(() -> {
             Toast.makeText(context, "All data restored successfully!\nPlease re-open the app.", Toast.LENGTH_LONG).show();
-            processDialog.dismiss();
+            if (processDialog.isShowing()) processDialog.dismiss();
             
             kill();
             ((Activity) context).finishAffinity();
@@ -288,7 +324,7 @@ public class Mitobi {
         
         if (isMainProcess) handler.post(() -> {
             Toast.makeText(context, "All data backed up successfully!", Toast.LENGTH_LONG).show();
-            processDialog.dismiss();
+            if (processDialog.isShowing()) processDialog.dismiss();
         });
     }
     

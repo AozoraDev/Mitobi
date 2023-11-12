@@ -2,9 +2,13 @@ package com.harubyte.mitobi;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class Utils {
@@ -24,6 +28,38 @@ public class Utils {
                 fos.write(buffer, 0, read);
             }
         } 
+    }
+    
+    /*
+    * Reading content inside a file
+    *
+    * @param file    Input of the file
+    */
+    public static String read(File file) throws IOException {
+        try (FileReader fr = new FileReader(file);
+        BufferedReader br = new BufferedReader(fr)) {
+            String line;
+            StringBuilder sb = new StringBuilder();
+            
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+            
+            return sb.toString();
+        }
+    }
+    
+    /*
+    * Writing string to file
+    *
+    * @param path       Output path for the file
+    * @param content    The content to write
+    */
+    public static void writeString(File file, String content) throws IOException {
+        try (FileWriter fw = new FileWriter(file);
+        BufferedWriter bw = new BufferedWriter(fw)) {
+            bw.write(content);
+        }
     }
     
     /*
