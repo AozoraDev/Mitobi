@@ -130,54 +130,56 @@ public class Mitobi {
     * @param back    Is it just back to main dialog or not
     */
     public void start(Boolean back) {
-        // If not back, create new dialog
-        if (!back) {
-            // Auto Backup
-            if (config.optBoolean("autoBackup", false)) {
-                executor.execute(() -> {
-                    Utils.removeAll(externalData);
-                    if (config.optBoolean("autoBackup_withCache", false)) {
-                        backup(data, true, true);
-                    } else {
-                        backup(data, false, true);
-                    }
-                    
-                    // Kill the executor if dialog is hidden
-                    if (config.optBoolean("hideDialog", false)) kill();
-                });
-            }
-            
-            Log.i(Configs.NAME, "Started!");
-            
-            StringBuilder sb = new StringBuilder();
-            ApplicationInfo ai = context.getApplicationInfo();
-            String appLabel = ai.labelRes == 0 ? ai.nonLocalizedLabel.toString() : context.getString(ai.labelRes);
-            
-            sb.append("| " + appLabel + " |\n");
-            sb.append(ai.packageName);
-            sb.append("\n\nData 1: " + data.toPath());
-            sb.append("\n\nData 2: " + externalData.getParentFile().toPath());
-            
-            mainDialog = new AlertDialog.Builder(context, theme)
-            .setTitle(Configs.TITLE)
-            .setMessage(sb.toString())
-            .setPositiveButton("Backup", (d, w) -> backupDialog())
-            .setNegativeButton("Restore", (d, w) -> restoreDialog())
-            .setNeutralButton("Close", (d, w) -> {
-                // Don't shutdown the executor and handler if its a test app
-                if (!ai.packageName.equals("com.harubyte.mitobiapp")) {
-                    kill();
+        // If back, show the already created mainDialog
+        if (back && mainDialog != null) {
+            mainDialog.show();
+            return;
+        }
+        
+        // Auto Backup
+        if (config.optBoolean("autoBackup", false)) {
+            executor.execute(() -> {
+                Utils.removeAll(externalData);
+                if (config.optBoolean("autoBackup_withCache", false)) {
+                    backup(data, true, true);
+                } else {
+                    backup(data, false, true);
                 }
                 
-                if (callback != null) callback.onClose();
-                Log.i(Configs.NAME, "Dialog closed!");
-            })
-            .setCancelable(false)
-            .create();
+                // Kill the executor if dialog is hidden
+                if (config.optBoolean("hideDialog", false)) kill();
+            });
+        }
+        
+        Log.i(Configs.NAME, "Started!");
+        
+        StringBuilder sb = new StringBuilder();
+        ApplicationInfo ai = context.getApplicationInfo();
+        String appLabel = ai.labelRes == 0 ? ai.nonLocalizedLabel.toString() : context.getString(ai.labelRes);
+        
+        sb.append("| " + appLabel + " |\n");
+        sb.append(ai.packageName);
+        sb.append("\n\nData 1: " + data.toPath());
+        sb.append("\n\nData 2: " + externalData.getParentFile().toPath());
+        
+        mainDialog = new AlertDialog.Builder(context, theme)
+        .setTitle(Configs.TITLE)
+        .setMessage(sb.toString())
+        .setPositiveButton("Backup", (d, w) -> backupDialog())
+        .setNegativeButton("Restore", (d, w) -> restoreDialog())
+        .setNeutralButton("Close", (d, w) -> {
+            // Don't shutdown the executor and handler if its a test app
+            if (!ai.packageName.equals("com.harubyte.mitobiapp")) {
+                kill();
+            }
             
-            if (!config.optBoolean("hideDialog", false)) mainDialog.show();
-        } else {
-            // Otherwise, show the already created mainDialog
+            if (callback != null) callback.onClose();
+            Log.i(Configs.NAME, "Dialog closed!");
+        })
+        .setCancelable(false)
+        .create();
+        
+        if (!config.optBoolean("hideDialog", false)) {
             mainDialog.show();
         }
     }
