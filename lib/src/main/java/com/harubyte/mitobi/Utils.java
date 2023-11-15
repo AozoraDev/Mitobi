@@ -1,7 +1,6 @@
 package com.harubyte.mitobi;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -105,9 +104,9 @@ public class Utils {
     *
     * @return    `true` if has storage permission, `false` if not.
     */
-    public static boolean checkStoragePermission(Activity activity) {
+    public static boolean checkStoragePermission(Context context) {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-            return (activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            return (context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             == PackageManager.PERMISSION_GRANTED);
         } else {
             // Above Android 9, falsy.

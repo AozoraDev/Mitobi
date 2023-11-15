@@ -67,6 +67,7 @@ public class Configs {
             if (!isSame) Utils.writeString(file, savedConfig.toString(2));
         } else {
             // Not exist. Create new config file.
+            Log.w(NAME, "Config file is not exist. Creating new one.");
             Utils.writeString(file, config.toString(2));
         }
     }

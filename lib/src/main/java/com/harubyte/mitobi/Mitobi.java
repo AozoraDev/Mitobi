@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Button;
@@ -33,9 +35,9 @@ public class Mitobi {
         this.data = context.getDataDir();
         this.externalData = context.getExternalFilesDir("Mitobi");
         
+        File configFile = new File(externalData.getParent() + File.separator + "MitobiConfig.json");
         try {
             // Set up config file
-            File configFile = new File(externalData.getParent() + File.separator + "MitobiConfig.json");
             Configs.setupConfig(configFile);
             
             this.config = new JSONObject(Utils.read(configFile));
@@ -56,13 +58,63 @@ public class Mitobi {
             }
         }
         
+        // Backup data inside external storage
+        boolean canUseExternalStorage = true; // Prevent call start() when warning dialog appear
+        
+        if (config.optBoolean("useExternalStorage", false)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // Android 10 and above not allowed.
+                canUseExternalStorage = false;
+                Log.w(Configs.NAME, "Cannot use external storage.");
+                
+                AlertDialog dialog = new AlertDialog.Builder(context, theme)
+                .setTitle(Configs.TITLE)
+                .setMessage("\"useExternalStorage\" can only be used for Android Pie (9.0) and below. The internal data will still be backed up inside app's external data.")
+                .setPositiveButton("OK", (d, w) -> start())
+                .setCancelable(false)
+                .show();
+                
+                // Disable useExternalStorage in local config
+                // Write it async
+                executor.execute(() -> {
+                    try {
+                        config.put("useExternalStorage", false);
+                        Utils.writeString(configFile, config.toString(2));
+                    } catch (Exception err) {
+                        err.printStackTrace();
+                    }
+                });
+            
+            // Android Pie and below, now check the storage permission
+            } else if (Utils.checkStoragePermission(context)) {
+                // Move external data path to external storage
+                String path = Environment.getExternalStorageDirectory().toPath()
+                + File.separator
+                + Configs.NAME
+                + File.separator
+                + context.getApplicationInfo().packageName;
+                this.externalData = new File(path);
+                
+                // Create the folders if not exist
+                if (!this.externalData.exists()) this.externalData.mkdirs();
+            }
+            
+            // Has no storage permission
+            else {
+                Log.w(Configs.NAME, "Cannot use external storage due to missing storage permission.");
+                Toast.makeText(context, "Error: Missing storage permission. Will keep using external data instead.", Toast.LENGTH_LONG).show();
+            }
+        }
+        
         // AlertDialog for loading
         this.processDialog = new AlertDialog.Builder(context, theme)
         .setCancelable(false)
         .create();
         
         Log.i(Configs.NAME, Configs.TITLE + " initiated!");
-        start();
+        // If useExternalStorage enabled and device is not Android Q and above,
+        // Just start already.
+        if (canUseExternalStorage) start();
     }
     
     /*
