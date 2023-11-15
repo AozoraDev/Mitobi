@@ -28,6 +28,7 @@ public class Configs {
             config.put("autoBackup_withCache", false);
             config.put("useMaterialTheme", true);
             config.put("hideDialog", false);
+            config.put("useExternalStorage", false);
         } catch (JSONException err) {
             // Nothing i can do.
         }

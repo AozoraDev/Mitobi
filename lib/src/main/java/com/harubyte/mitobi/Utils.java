@@ -1,7 +1,11 @@
 package com.harubyte.mitobi;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.os.Build;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -90,6 +94,23 @@ public class Utils {
         if (nightMode == Configuration.UI_MODE_NIGHT_YES) {
             return true;
         } else {
+            return false;
+        }
+    }
+    
+    /*
+    * Check storage permission for saving data externally.
+    * Since Android 29+ require some bullshit to access the storage,
+    * Permission check only executed for Android 28 and below.
+    *
+    * @return    `true` if has storage permission, `false` if not.
+    */
+    public static boolean checkStoragePermission(Activity activity) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            return (activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            == PackageManager.PERMISSION_GRANTED);
+        } else {
+            // Above Android 9, falsy.
             return false;
         }
     }
