@@ -71,4 +71,25 @@ public class Configs {
             Utils.writeString(file, config.toString(2));
         }
     }
+    
+    /*
+    * List all configuration as String
+    *
+    * @param config    The configuration as JSONObject
+    */
+    public static String listConfigs(JSONObject config) {
+        StringBuilder sb = new StringBuilder();
+        JSONObject dc = defaultConfig();
+        Iterator<String> iterator = dc.keys();
+        
+        while (iterator.hasNext()) {
+            String key = iterator.next();
+            sb.append(String.format("- %s: %s\n",
+                key,
+                (config.has(key)) ? config.opt(key) : dc.opt(key)
+            ));
+        }
+        
+        return sb.toString();
+    }
 }

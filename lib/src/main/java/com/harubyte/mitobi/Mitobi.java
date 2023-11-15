@@ -159,8 +159,12 @@ public class Mitobi {
         
         sb.append("| " + appLabel + " |\n");
         sb.append(ai.packageName);
-        sb.append("\n\nData 1: " + data.toPath());
-        sb.append("\n\nData 2: " + externalData.getParentFile().toPath());
+        sb.append("\n\n");
+        sb.append("Output:\n" + externalData.getPath() + "/\n\n");
+        
+        // Configuration list
+        sb.append("Configuration:\n");
+        sb.append(Configs.listConfigs(config));
         
         mainDialog = new AlertDialog.Builder(context, theme)
         .setTitle(Configs.TITLE)
