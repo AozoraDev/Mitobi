@@ -11,10 +11,6 @@ See [Wiki](https://github.com/HaruByte/Mitobi/wiki) for more information.
 - [ ] File Chooser
 - [ ] Backup to internal storage (if the app has storage permission)
 - [ ] Works without modifying the APK (root probably required)
-## Installing
-See [Wiki:Installing](https://github.com/HaruByte/Mitobi/wiki/Installing)
-## Building
-See [Wiki:Building](https://github.com/HaruByte/Mitobi/wiki/Building)
 ## License
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
