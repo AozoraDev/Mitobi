@@ -15,6 +15,7 @@ public class MitobiActivity extends Activity {
         .setOnDialogClosed(() -> {
             Intent intent = new Intent(Configs.ACTION);
             startActivity(intent);
+            finish();
         });
     }
 }
