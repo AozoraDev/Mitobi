@@ -51,7 +51,7 @@ public class Mitobi {
         
         // Determine theme
         if (config.optBoolean("useMaterialTheme", true)) {
-            if (Utils.isNightMode(context)) {
+            if (Utils.isNightMode(context) || config.optBoolean("forceDarkMode", false)) {
                 theme = R.style.Theme_Material_Dialog_Alert;
             } else {
                 theme = R.style.Theme_Material_Light_Dialog_Alert;

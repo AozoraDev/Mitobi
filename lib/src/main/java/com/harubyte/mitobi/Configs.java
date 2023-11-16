@@ -27,6 +27,7 @@ public class Configs {
             config.put("autoBackup", false);
             config.put("autoBackup_withCache", false);
             config.put("useMaterialTheme", true);
+            config.put("forceDarkMode", false);
             config.put("hideDialog", false);
             config.put("useExternalStorage", false);
         } catch (JSONException err) {
