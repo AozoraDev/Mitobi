@@ -34,8 +34,15 @@ public class Mitobi {
         this.handler = new Handler(context.getMainLooper());
         this.data = context.getDataDir();
         this.externalData = context.getExternalFilesDir("Mitobi");
+        this.processDialog = new AlertDialog.Builder(context, theme)
+        .setCancelable(false)
+        .create(); // For loading dialog
+        File configFile = new File(
+            externalData.getParent()
+            + File.separator
+            + "MitobiConfig.json"
+        ); // Path to config file. Always use external data path.
         
-        File configFile = new File(externalData.getParent() + File.separator + "MitobiConfig.json");
         try {
             // Set up config file
             Configs.setupConfig(configFile);
@@ -75,15 +82,12 @@ public class Mitobi {
                 .show();
                 
                 // Disable useExternalStorage in local config
-                // Write it async
-                executor.execute(() -> {
-                    try {
-                        config.put("useExternalStorage", false);
-                        Utils.writeString(configFile, config.toString(2));
-                    } catch (Exception err) {
-                        err.printStackTrace();
-                    }
-                });
+                try {
+                    config.put("useExternalStorage", false);
+                    Utils.writeString(configFile, config.toString(2));
+                } catch (Exception err) {
+                    err.printStackTrace();
+                }
             
             // Android Pie and below, now check the storage permission
             } else if (Utils.checkStoragePermission(context)) {
@@ -105,11 +109,6 @@ public class Mitobi {
                 Toast.makeText(context, "Error: Missing storage permission. Will keep using external data instead.", Toast.LENGTH_LONG).show();
             }
         }
-        
-        // AlertDialog for loading
-        this.processDialog = new AlertDialog.Builder(context, theme)
-        .setCancelable(false)
-        .create();
         
         Log.i(Configs.NAME, Configs.TITLE + " initiated!");
         // If useExternalStorage enabled and device is not Android Q and above,
