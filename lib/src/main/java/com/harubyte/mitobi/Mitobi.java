@@ -34,6 +34,7 @@ public class Mitobi {
         this.handler = new Handler(context.getMainLooper());
         this.data = context.getDataDir();
         this.externalData = context.getExternalFilesDir("Mitobi");
+        
         this.processDialog = new AlertDialog.Builder(context, theme)
         .setCancelable(false)
         .create(); // For loading dialog
@@ -45,8 +46,7 @@ public class Mitobi {
         
         try {
             // Set up config file
-            Configs.setupConfig(configFile);
-            
+            Configs.setupConfig(configFile); // It will write new config if the local config not exist yet
             this.config = new JSONObject(Utils.read(configFile));
         } catch (Exception err) {
             err.printStackTrace();
@@ -56,27 +56,32 @@ public class Mitobi {
             this.config = Configs.defaultConfig();
         }
         
-        // Determine theme
+        // Mitobi AlertDialog Material theme
         if (config.optBoolean("useMaterialTheme", true)) {
+            // Detect the device theme or force it using "forceDarkMode" config
             if (Utils.isNightMode(context) || config.optBoolean("forceDarkMode", false)) {
                 theme = R.style.Theme_Material_Dialog_Alert;
             } else {
+                // Welp, it's light mode. How shame you are.
                 theme = R.style.Theme_Material_Light_Dialog_Alert;
             }
         }
         
-        // Backup data inside external storage
-        boolean canUseExternalStorage = true; // Prevent call start() when warning dialog appear
+        boolean canUseExternalStorage = true; // Prevent call start() when "useExternalStorage" warning dialog appear
         
+        // Backup data inside external storage
         if (config.optBoolean("useExternalStorage", false)) {
+            // Android 10 and above not allowed.
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                // Android 10 and above not allowed.
                 canUseExternalStorage = false;
                 Log.w(Configs.NAME, "Cannot use external storage.");
                 
                 AlertDialog dialog = new AlertDialog.Builder(context, theme)
                 .setTitle(Configs.TITLE)
-                .setMessage("\"useExternalStorage\" can only be used for Android Pie (9.0) and below. The internal data will still be backed up inside app's external data.")
+                .setMessage(
+                    "\"useExternalStorage\" can only be used for Android Pie (9.0) and below. "
+                    + "The internal data will still be backed up inside app's external data."
+                )
                 .setPositiveButton("OK", (d, w) -> start())
                 .setCancelable(false)
                 .show();
@@ -89,7 +94,7 @@ public class Mitobi {
                     err.printStackTrace();
                 }
             
-            // Android Pie and below, now check the storage permission
+            // Android Pie and below, has storage permission
             } else if (Utils.checkStoragePermission(context)) {
                 // Move external data path to external storage
                 String path = Environment.getExternalStorageDirectory().toPath()
