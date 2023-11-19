@@ -9,7 +9,7 @@ See [Wiki](https://github.com/HaruByte/Mitobi/wiki) for more information.
 - [x] Backup
 - [x] Restore
 - [ ] File Chooser
-- [ ] Backup to internal storage (if the app has storage permission)
+- [x] Backup to internal storage (if the app has storage permission) (only works for Android 9.0 and below)
 - [ ] Works without modifying the APK (root probably required)
 ## License
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
