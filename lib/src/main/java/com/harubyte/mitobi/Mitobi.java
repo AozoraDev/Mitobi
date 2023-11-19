@@ -187,6 +187,7 @@ public class Mitobi {
         .setCancelable(false)
         .create();
         
+        // if hideDialog config disabled
         if (!config.optBoolean("hideDialog", false)) {
             mainDialog.show();
         }
@@ -208,7 +209,7 @@ public class Mitobi {
     public Mitobi setOnDialogClosed(Interface.OnDialogClosed callback) {
         this.callback = callback;
         return this;
-    }
+    } 
     
       /////////////
      // Dialogs //
@@ -391,19 +392,23 @@ public class Mitobi {
     }
     
     /*
-    * Get list of the files for StringBuilder
+    * Get list of the files inside a directory.
+    * List is not going to have the parent path.
     *
-    * @param files    The File of the directoey
-    * @return         List of the files
+    * @param files    The directory as File
+    * @return         List of the files in String
     */
     private String getFilesList(File files) {
         if (files.list().length == 0) return "Empty";
         
-        String mainPath = (files.getAbsolutePath().contains(data.getAbsolutePath()))
-        ? data.getAbsolutePath()
-        : externalData.getAbsolutePath();
-        
+        // Parent path should be removed from the list.
+        // So mainPath is for getting the parent path to remove in the list.
+        // So the output will be "/file" instead of "/data/data/com.example/file"
+        String mainPath = (files.getAbsolutePath().contains(data.getPath()))
+        ? data.getPath()
+        : externalData.getPath();
         StringBuilder sb = new StringBuilder();
+        
         for (File file : files.listFiles()) {
             String path = file.getAbsolutePath().replaceAll(mainPath, "");
             sb.append("\n- " + path + " ");
